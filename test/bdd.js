@@ -94,7 +94,7 @@ describe('proxy agent', function () {
       // no one should be listening on 443
       https.get(options).on('error', e => {
         agent.destroy()
-        e.message.should.be.equal('socket hang up')
+        e.message.should.any.be.equal('socket hang up').equal('HTTP/1.1 500')
         cb()
       })
     })
