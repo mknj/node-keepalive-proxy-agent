@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "cov": "nyc --reporter=html --reporter=text mocha && opener coverage/index.html",
-    "travis": "nyc --reporter=lcov --reporter=text mocha"
+    "travis": "nyc --reporter=json --reporter=text mocha"
   },
   "repository": {
     "type": "git",
