@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "cov": "nyc --reporter=html --reporter=text mocha && opener coverage/index.html"
+    "cov": "nyc --reporter=html --reporter=text mocha && opener coverage/index.html",
+    "travis": "nyc --reporter=html --reporter=text mocha"
   },
   "repository": {
     "type": "git",
