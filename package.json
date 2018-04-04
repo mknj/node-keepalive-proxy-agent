@@ -8,6 +8,9 @@
     "cov": "nyc --reporter=html --reporter=text mocha && opener coverage/index.html",
     "travis": "nyc --reporter=json --reporter=text mocha"
   },
+  "files": [
+    "index.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mknj/node-keepalive-proxy-agent.git"
