@@ -61,6 +61,20 @@ describe('proxy agent', function () {
         })
       })
     })
+    it('also work with no proxy setting', function (cb) {
+      let agent = new myAgent()
+      let options = {hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false}
+      let data = 'BAD'
+      https.get(options, (resp) => {
+        resp.statusCode.should.equal(200)
+        resp.on('data', d => data = d)
+        resp.on('end', () => {
+          agent.destroy()
+          data.toString().should.equal(':/:')
+          cb()
+        })
+      })
+    })
   })
   describe('when using no authentication', function () {
     it('succeeds on good request', function (cb) {
@@ -94,7 +108,7 @@ describe('proxy agent', function () {
       // no one should be listening on 443
       https.get(options).on('error', e => {
         agent.destroy()
-        e.message.should.be.equal('HTTP/1.1 500')
+        e.message.should.be.oneOf('HTTP/1.1 500','socket hang up')
         cb()
       })
     })

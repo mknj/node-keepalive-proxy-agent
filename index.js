@@ -6,14 +6,17 @@ class myAgent extends https.Agent {
   constructor (options) {
     options = options || {}
     if (options.proxy === undefined) {
-      let u = {}
+      let u = null
       if (process.env.HTTPS_PROXY !== undefined) {
         u = url.parse(process.env.HTTPS_PROXY)
       }
       if (process.env.https_proxy !== undefined) {
         u = url.parse(process.env.https_proxy)
       }
-      options.proxy = {hostname: u.hostname, port: u.port}
+      if(u)
+      {
+        options.proxy = {hostname: u.hostname, port: u.port}
+      }
     }
     if (options.keepAlive === undefined) {
       options.keepAlive = true
@@ -47,7 +50,13 @@ class myAgent extends https.Agent {
   }
 
   createConnection (options, cb) {
-    this.createConnectionHttpsAfterHttp(options, cb)
+    if (options.proxy) {
+      this.createConnectionHttpsAfterHttp(options, cb)
+    }
+    else {
+      console.log("O",options)
+      cb(null,super.createConnection(options))
+    }
   }
 }
 
