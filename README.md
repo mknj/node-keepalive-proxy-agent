@@ -6,6 +6,36 @@
 
 proxy agent that honors keepalive
 
+# examples
+
+## using https_proxy
+``` javascript
+let https = require('https')
+
+let Agent = require('keepalive-proxy-agent')
+
+let agent = new Agent ()
+
+let options = {hostname: 'google.de', port: 443, agent: agent, rejectUnauthorized: false}
+
+https.get(options, (resp) => resp.pipe(process.stdout))
+
+```
+
+## using provided proxy
+``` javascript
+let https = require('https')
+
+let Agent = require('keepalive-proxy-agent')
+
+let agent = new Agent ({proxy:{hostname:"MYPROXYHOST",port:3128}})
+
+let options = {hostname: 'google.de', port: 443, agent: agent, rejectUnauthorized: false}
+
+https.get(options, (resp) => resp.pipe(process.stdout))
+
+```
+
 
 # others 
 - https://www.npmjs.com/package/https-agent

@@ -54,7 +54,6 @@ class myAgent extends https.Agent {
       this.createConnectionHttpsAfterHttp(options, cb)
     }
     else {
-      console.log("O",options)
       cb(null,super.createConnection(options))
     }
   }
