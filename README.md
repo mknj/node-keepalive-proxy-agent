@@ -13,19 +13,21 @@
 - basic auth for proxy authentication
 - 60 lines of code (100% code coverage)
 
+# installation
+
+```
+npm install keepalive-proxy-agent
+```
+
 # examples
 
 ## using the https_proxy or HTTP_PROXY environment variables
 
 ``` javascript
 let https = require('https')
-
 let Agent = require('keepalive-proxy-agent')
-
 let agent = new Agent ()
-
 let options = {hostname: 'google.de', port: 443, agent: agent}
-
 https.get(options, (resp) => resp.pipe(process.stdout))
 
 ```
