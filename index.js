@@ -13,8 +13,7 @@ class myAgent extends https.Agent {
       if (process.env.https_proxy !== undefined) {
         u = url.parse(process.env.https_proxy)
       }
-      if(u)
-      {
+      if (u) {
         options.proxy = {hostname: u.hostname, port: u.port}
       }
     }
@@ -52,17 +51,10 @@ class myAgent extends https.Agent {
   createConnection (options, cb) {
     if (options.proxy) {
       this.createConnectionHttpsAfterHttp(options, cb)
-    }
-    else {
-      cb(null,super.createConnection(options))
+    } else {
+      cb(null, super.createConnection(options))
     }
   }
 }
-
-// TODO bug? keepAlive: false, maxSockets:1 -> only one connection is made
-// TODO compare to other tunnels
-// TODO clarify limitations (currently no auth, only HTTP+HTTPS..)
-// TODO once('data' can fail if proxy server sends answer in two packets
-// TODO test with squid
 
 module.exports = myAgent

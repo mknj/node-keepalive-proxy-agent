@@ -5,6 +5,9 @@ const myproxy = require('proxy')
 function startserver (PORT) {
   return new Promise((resolve) => {
     pem.createCertificate({days: 1, selfSigned: true}, function (err, keys) {
+      if (err) {
+        return
+      }
       let server = https.createServer({key: keys.serviceKey, cert: keys.certificate}, function (req, res) {
         res.end(':' + req.url + ':')
       }).listen(PORT)
@@ -26,7 +29,7 @@ function startproxy (PORT, auth) {
 
 let servers = []
 
-async function start() {
+async function start () {
   servers.push(await startserver(8443))
   servers.push(await startserver(8444))
   servers.push(startproxy(3128))
