@@ -50,7 +50,7 @@ let options = {hostname: 'google.de', port: 443, agent: agent, rejectUnauthorize
 
 ``` javascript
 ...
-let agent = new Agent ({proxy:{hostname:"MYPROXYHOST",port:3128.auth:"USER:PASS"}})
+let agent = new Agent ({proxy:{hostname:"MYPROXYHOST",port:3128, auth:"USER:PASS"}})
 ...
 ```
 

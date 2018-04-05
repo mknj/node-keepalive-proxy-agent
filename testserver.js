@@ -3,10 +3,10 @@ const pem = require('pem')
 const myproxy = require('proxy')
 
 function startserver (PORT) {
-  return new Promise((resolve) => {
+  return new Promise((resolve,reject) => {
     pem.createCertificate({days: 1, selfSigned: true}, function (err, keys) {
       if (err) {
-        return
+        reject(err)
       }
       let server = https.createServer({key: keys.serviceKey, cert: keys.certificate}, function (req, res) {
         res.end(':' + req.url + ':')
