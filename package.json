@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "lint": "eslint index.js testerver.js test/*.js",
     "cov": "nyc --reporter=html --reporter=text mocha && opener coverage/index.html",
     "travis": "nyc --reporter=json --reporter=text mocha"
   },
