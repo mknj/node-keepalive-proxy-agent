@@ -765,7 +765,7 @@ eslint-plugin-node@^6.0.1, eslint-plugin-node@~6.0.0:
     resolve "^1.3.3"
     semver "^5.4.1"
 
-eslint-plugin-promise@~3.7.0:
+eslint-plugin-promise@^3.7.0, eslint-plugin-promise@~3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-3.7.0.tgz#f4bde5c2c77cdd69557a8f69a24d1ad3cfc9e67e"
 
@@ -2204,8 +2204,8 @@ path-type@^2.0.0:
     pify "^2.0.0"
 
 pem@^1.12.3:
-  version "1.12.3"
-  resolved "https://registry.yarnpkg.com/pem/-/pem-1.12.3.tgz#b1fb5c8b79da8d18146c27fee79b0d4ddf9905b3"
+  version "1.12.4"
+  resolved "https://registry.yarnpkg.com/pem/-/pem-1.12.4.tgz#bc7bf58555d51fcdc970ed1052af949ee4df4de8"
   dependencies:
     md5 "^2.2.1"
     os-tmpdir "^1.0.1"
@@ -2351,15 +2351,15 @@ read-pkg@^2.0.0:
     path-type "^2.0.0"
 
 readable-stream@^2.2.2:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.5.tgz#b4f85003a938cbb6ecbce2a124fb1012bd1a838d"
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.6.tgz#b11c27d88b8ff1fbe070643cf94b0c79ae1b0aaf"
   dependencies:
     core-util-is "~1.0.0"
     inherits "~2.0.3"
     isarray "~1.0.0"
     process-nextick-args "~2.0.0"
     safe-buffer "~5.1.1"
-    string_decoder "~1.0.3"
+    string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
 regenerator-runtime@^0.11.0:
@@ -2773,9 +2773,9 @@ string-width@^2.0.0, string-width@^2.1.0, string-width@^2.1.1:
     is-fullwidth-code-point "^2.0.0"
     strip-ansi "^4.0.0"
 
-string_decoder@~1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-1.0.3.tgz#0fc67d7c141825de94282dd536bec6b9bce860ab"
+string_decoder@~1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-1.1.1.tgz#9cf1611ba62685d7030ae9e4ba34149c3af03fc8"
   dependencies:
     safe-buffer "~5.1.0"
 
