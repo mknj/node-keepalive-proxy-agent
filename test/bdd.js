@@ -1,31 +1,31 @@
 /* eslint-env node, mocha */
 require('should')
-let testserver = require('../testserver')
+let testServer = require('../testserver')
 let https = require('https')
 let MyAgent = require('..')
 
 describe('proxy agent', function () {
   before(function () {
-    return testserver.start()
+    return testServer.start()
   })
   beforeEach(function () {
     delete process.env.https_proxy
     delete process.env.HTTPS_PROXY
   })
   after(function () {
-    testserver.stop()
+    return testServer.stop()
   })
   describe('agent', function () {
     it('should default keepAlive', function (cb) {
       let agent = new MyAgent()
+      // noinspection JSUnresolvedVariable
       agent.options.keepAlive.should.equal(true)
-      agent.destroy()
       cb()
     })
     it('should not overwrite keepAlive', function (cb) {
       let agent = new MyAgent({keepAlive: false})
+      // noinspection JSUnresolvedVariable
       agent.options.keepAlive.should.equal(false)
-      agent.destroy()
       cb()
     })
   })
@@ -39,7 +39,6 @@ describe('proxy agent', function () {
         resp.statusCode.should.equal(200)
         resp.on('data', d => { data = d })
         resp.on('end', () => {
-          agent.destroy()
           data.toString().should.equal(':/:')
           cb()
         })
@@ -54,7 +53,6 @@ describe('proxy agent', function () {
         resp.statusCode.should.equal(200)
         resp.on('data', d => { data = d })
         resp.on('end', () => {
-          agent.destroy()
           data.toString().should.equal(':/:')
           cb()
         })
@@ -68,7 +66,6 @@ describe('proxy agent', function () {
         resp.statusCode.should.equal(200)
         resp.on('data', d => { data = d })
         resp.on('end', () => {
-          agent.destroy()
           data.toString().should.equal(':/:')
           cb()
         })
@@ -84,7 +81,6 @@ describe('proxy agent', function () {
         resp.statusCode.should.equal(200)
         resp.on('data', d => { data = d })
         resp.on('end', () => {
-          agent.destroy()
           data.toString().should.equal(':/:')
           cb()
         })
@@ -95,7 +91,6 @@ describe('proxy agent', function () {
       let options = {hostname: 'localhost', port: 8445, agent: agent, rejectUnauthorized: false}
 
       https.get(options).on('error', e => {
-        agent.destroy()
         e.message.should.be.equal('HTTP/1.1 500')
         cb()
       })
@@ -104,9 +99,7 @@ describe('proxy agent', function () {
     it('automatically uses port 443 ', function (cb) {
       let agent = new MyAgent({proxy: {hostname: 'localhost', port: 3128}})
       let options = {hostname: 'localhost', agent: agent, rejectUnauthorized: false}
-      // no one should be listening on 443
       https.get(options).on('error', e => {
-        agent.destroy()
         e.message.should.be.oneOf('HTTP/1.1 500', 'socket hang up')
         cb()
       })
@@ -114,9 +107,8 @@ describe('proxy agent', function () {
     it('throws error on bad proxy port', function (cb) {
       let agent = new MyAgent({proxy: {hostname: 'localhost', port: 3130}})
       let options = {hostname: 'localhost', agent: agent, rejectUnauthorized: false}
-      // no one should be listening on 443
       https.get(options).on('error', e => {
-        agent.destroy()
+        // noinspection SpellCheckingInspection
         e.message.should.be.equal('connect ECONNREFUSED 127.0.0.1:3130')
         cb()
       })
@@ -131,7 +123,6 @@ describe('proxy agent', function () {
         resp.statusCode.should.equal(200)
         resp.on('data', d => { data = d })
         resp.on('end', () => {
-          agent.destroy()
           data.toString().should.equal(':/:')
           cb()
         })
@@ -142,7 +133,6 @@ describe('proxy agent', function () {
       let options = {hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false}
 
       https.get(options).on('error', e => {
-        agent.destroy()
         e.message.should.be.equal('HTTP/1.1 407')
         cb()
       })

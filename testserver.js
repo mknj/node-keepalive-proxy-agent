@@ -1,9 +1,9 @@
 const https = require('https')
 const pem = require('pem')
-const myproxy = require('proxy')
+const myProxy = require('proxy')
 
-function startserver (PORT) {
-  return new Promise((resolve,reject) => {
+function startServer (PORT) {
+  return new Promise((resolve, reject) => {
     pem.createCertificate({days: 1, selfSigned: true}, function (err, keys) {
       if (err) {
         reject(err)
@@ -16,13 +16,14 @@ function startserver (PORT) {
   })
 }
 
-function startproxy (PORT, auth) {
-  let p = myproxy()
+function startProxy (PORT, auth) {
+  let p = myProxy(null, null)
   if (auth) {
     p.authenticate = function (req, fn) {
       fn(null, req.headers['proxy-authorization'] === 'Basic Ym9iOmFsaWNl') // user bob password alice
     }
   }
+  // noinspection JSUnresolvedFunction
   p.listen(PORT)
   return p
 }
@@ -30,10 +31,10 @@ function startproxy (PORT, auth) {
 let servers = []
 
 async function start () {
-  servers.push(await startserver(8443))
-  servers.push(await startserver(8444))
-  servers.push(startproxy(3128))
-  servers.push(startproxy(3129, true))
+  servers.push(await startServer(8443))
+  servers.push(await startServer(8444))
+  servers.push(startProxy(3128))
+  servers.push(startProxy(3129, true))
 }
 
 async function stop () {

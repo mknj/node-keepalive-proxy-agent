@@ -2,7 +2,7 @@ let https = require('https')
 let MyAgent = require('.')
 let fs = require('fs')
 let si = require('si')
-let testserver = require('./testserver')
+let testServer = require('./testserver')
 let ports = {}
 ports.add = function (k, i) {
   i = i || 1
@@ -16,7 +16,7 @@ let agents = []
 agents[0] = new MyAgent({maxSockets: 4, proxy: {hostname: 'localhost', port: 3128}})
 agents[1] = new MyAgent({proxy: {hostname: 'localhost', port: 3129, auth: 'bob:alice'}})
 
-function doit () {
+function doIt () {
   if (countDown <= 0) {
     return
   }
@@ -29,7 +29,7 @@ function doit () {
     resp.on('data', x => x
     )
       .on('end', () => {
-        doit()
+        doIt()
         workers = workers - 1
       })
   }).on('error', (err) => {
@@ -37,10 +37,10 @@ function doit () {
   })
 }
 
-testserver.start().then(
+testServer.start().then(
   () => {
     for (let i = 0; i < 50; ++i) {
-      setImmediate(doit)
+      setImmediate(doIt)
     }
   }
 )
@@ -73,7 +73,7 @@ process.stdin.on('data', data => {
   // entering s\n will start 50 parallel workers
   if (data === 's\n') {
     for (let i = 0; i < 50; ++i) {
-      setImmediate(doit)
+      setImmediate(doIt)
     }
   }
 })

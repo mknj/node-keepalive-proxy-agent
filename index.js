@@ -24,28 +24,30 @@ class myAgent extends https.Agent {
   }
 
   createConnectionHttpsAfterHttp (options, cb) {
-    let psocket = net.connect(options.proxy)
+    let proxySocket = net.connect(options.proxy)
     let errorListener = (error) => {
-      psocket.destroy()
+      proxySocket.destroy()
       cb(error)
     }
-    psocket.once('error', errorListener)
-    psocket.once('data', (data) => {
-      psocket.removeListener('error', errorListener)
+    proxySocket.once('error', errorListener)
+    proxySocket.once('data', (data) => {
+      proxySocket.removeListener('error', errorListener)
       const m = data.toString().match(/^HTTP\/1.1 (\d*)/)
       if (m[1] !== '200') {
-        psocket.destroy()
+        proxySocket.destroy()
         return cb(new Error(m[0]))
       }
-      options.socket = psocket // tell super function to use our proxy socket,
+      options.socket = proxySocket // tell super function to use our proxy socket,
       cb(null, super.createConnection(options))
     })
     let cmd = 'CONNECT ' + options.hostname + ':' + options.port + ' HTTP/1.1\r\n'
     if (options.proxy.auth) {
-      cmd += 'Proxy-Authorization: Basic ' + (Buffer.from(options.proxy.auth).toString('base64')) + '\r\n'
+      // noinspection JSCheckFunctionSignatures
+      let auth = Buffer.from(options.proxy.auth).toString('base64')
+      cmd += 'Proxy-Authorization: Basic ' + auth + '\r\n'
     }
     cmd += '\r\n'
-    psocket.write(cmd)
+    proxySocket.write(cmd)
   }
 
   createConnection (options, cb) {
