@@ -1,5 +1,7 @@
 # node-keepalive-proxy-agent
 
+[![Join the chat at https://gitter.im/node-keepalive-proxy-agent/Lobby](https://badges.gitter.im/node-keepalive-proxy-agent/Lobby.svg)](https://gitter.im/node-keepalive-proxy-agent/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Greenkeeper badge](https://badges.greenkeeper.io/mknj/node-keepalive-proxy-agent.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/mknj/node-keepalive-proxy-agent.svg?branch=master)](https://travis-ci.org/mknj/node-keepalive-proxy-agent)
 [![codecov](https://codecov.io/gh/mknj/node-keepalive-proxy-agent/branch/master/graph/badge.svg)](https://codecov.io/gh/mknj/node-keepalive-proxy-agent)
