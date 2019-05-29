@@ -30,16 +30,30 @@ class myAgent extends https.Agent {
       cb(error)
     }
     proxySocket.once('error', errorListener)
-    proxySocket.once('data', (data) => {
+
+    let response = ''
+    let dataListener = (data) => {
+      response += data.toString()
+      if (!response.endsWith('\r\n\r\n')) {
+        // response not completed yet
+        return
+      }
       proxySocket.removeListener('error', errorListener)
-      const m = data.toString().match(/^HTTP\/1.1 (\d*)/)
-      if (m[1] !== '200') {
+      proxySocket.removeListener('data', dataListener)
+
+      const m = response.match(/^HTTP\/1.1 (\d*)/)
+      if (m == null || m[1] == null) {
+        proxySocket.destroy()
+        return cb(new Error(response.trim()))
+      } else if (m[1] !== '200') {
         proxySocket.destroy()
         return cb(new Error(m[0]))
       }
       options.socket = proxySocket // tell super function to use our proxy socket,
       cb(null, super.createConnection(options))
-    })
+    }
+    proxySocket.on('data', dataListener)
+
     let cmd = 'CONNECT ' + options.hostname + ':' + options.port + ' HTTP/1.1\r\n'
     if (options.proxy.auth) {
       // noinspection JSCheckFunctionSignatures
