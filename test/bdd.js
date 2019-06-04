@@ -1,7 +1,10 @@
 /* eslint-env node, mocha */
 require('should')
 let testServer = require('../testserver')
-let https = require('https')
+const http = require('http');
+const https = require('https')
+const net = require('net');
+const url = require('url');
 let MyAgent = require('..')
 
 describe('proxy agent', function () {
@@ -134,6 +137,138 @@ describe('proxy agent', function () {
 
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/1.1 407')
+        cb()
+      })
+    })
+  })
+
+  describe('when receiving chunked CONNECT response', function () {
+    let pServer;
+
+    beforeEach(() => {
+      pServer = http.createServer((req, res) => {
+        res.end();
+      })
+    })
+
+    afterEach(() => {
+      pServer.close();
+    })
+
+    function configureAndStartProxy(connectResponses, cb) {
+      pServer.on('connect', (request, socket, head) => {
+        let targetHost = request.url.split(':');
+        let conn = net.connect({
+          port: +targetHost[1],
+          host: targetHost[0],
+          allowHalfOpen: true
+        }, function () {
+          conn.on('finish', () => {
+            socket.destroy();
+          });
+          socket.on('close', () => {
+            // Client socket closed, closing tunnel
+            conn.end();
+          });
+    
+          function writeNextResponse(connectResponses) {
+            let response = connectResponses.shift()
+            socket.write(response, 'UTF-8', function () {
+              if (connectResponses.length > 0) {
+                setTimeout(writeNextResponse, 100, connectResponses)
+              } else {
+                conn.write(head);
+                conn.pipe(socket);
+                socket.pipe(conn);      
+              }
+            })
+          }
+          writeNextResponse(connectResponses);
+        });
+
+        conn.on('error', function(err) {
+          filterSocketConnReset(err);
+        });
+        socket.on('error', function(err) {
+          filterSocketConnReset(err);
+        });
+    
+        // Since node 0.9.9, ECONNRESET on sockets are no longer hidden
+        function filterSocketConnReset(err) {
+          if (err.code === 'ECONNRESET') {
+            // Ignore, we get these when the socket is closing
+          } else {
+            cb(err);
+          }
+        }
+      });
+      pServer.listen(3130);
+    }
+
+    it('succeeds on good response', function (cb) {
+      configureAndStartProxy(['HTTP/1.1 200 OK\r\n\r\n'], null, null, cb);
+      let agent = new MyAgent({proxy: {hostname: 'localhost', port: 3130}})
+      let options = {hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false}
+      let data = 'BAD'
+      https.get(options, (resp) => {
+        resp.statusCode.should.equal(200)
+        resp.on('data', d => { data = d })
+        resp.on('end', () => {
+          data.toString().should.equal(':/:')
+          agent.destroy();
+          cb()
+        })
+      })
+    })
+
+    it('succeeds on two part response', function (cb) {
+      configureAndStartProxy(['HTTP/1.1 200 OK\r\n', '\r\n'], null, null, cb);
+      let agent = new MyAgent({proxy: {hostname: 'localhost', port: 3130}})
+      let options = {hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false}
+      let data = 'BAD'
+      https.get(options, (resp) => {
+        resp.statusCode.should.equal(200)
+        resp.on('data', d => { data = d })
+        resp.on('end', () => {
+          data.toString().should.equal(':/:')
+          agent.destroy();
+          cb()
+        })
+      })
+    })
+
+    it('succeeds on three part response', function (cb) {
+      configureAndStartProxy(['HTTP/1.1 2', '00 OK', '\r\n\r\n'], null, null, cb);
+      let agent = new MyAgent({proxy: {hostname: 'localhost', port: 3130}})
+      let options = {hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false}
+      let data = 'BAD'
+      https.get(options, (resp) => {
+        resp.statusCode.should.equal(200)
+        resp.on('data', d => { data = d })
+        resp.on('end', () => {
+          data.toString().should.equal(':/:')
+          agent.destroy();
+          cb()
+        })
+      })
+    })
+
+    it('throws on three part 401 response', function (cb) {
+      configureAndStartProxy(['HTTP/1.1 4', '01 Not Authorized', '\r\n\r\n'], null, null, cb);
+      let agent = new MyAgent({proxy: {hostname: 'localhost', port: 3130}})
+      let options = {hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false}
+      https.get(options).on('error', e => {
+        e.message.should.be.equal('HTTP/1.1 401')
+        cb()
+      })
+    })
+
+    it('throws on three part invalid response', function (cb) {
+      configureAndStartProxy(['HTTP/0.0 4', '01 Not Authorized', '\r\n\r\n'], null, null, cb);
+      let agent = new MyAgent({proxy: {hostname: 'localhost', port: 3130}})
+      let options = {hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false}
+      https.get(options).on('error', e => {
+        e.message.should.be.equal('HTTP/0.0 401 Not Authorized')
         cb()
       })
     })
