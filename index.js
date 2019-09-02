@@ -8,13 +8,13 @@ class myAgent extends https.Agent {
     if (options.proxy === undefined) {
       let u = null
       if (process.env.HTTPS_PROXY !== undefined) {
-        u = url.parse(process.env.HTTPS_PROXY)
+        u = new url.URL(process.env.HTTPS_PROXY)
       }
       if (process.env.https_proxy !== undefined) {
-        u = url.parse(process.env.https_proxy)
+        u = new url.URL(process.env.https_proxy)
       }
       if (u) {
-        options.proxy = {hostname: u.hostname, port: u.port}
+        options.proxy = { hostname: u.hostname, port: u.port }
       }
     }
     if (options.keepAlive === undefined) {
@@ -24,15 +24,15 @@ class myAgent extends https.Agent {
   }
 
   createConnectionHttpsAfterHttp (options, cb) {
-    let proxySocket = net.connect(options.proxy)
-    let errorListener = (error) => {
+    const proxySocket = net.connect(options.proxy)
+    const errorListener = (error) => {
       proxySocket.destroy()
       cb(error)
     }
     proxySocket.once('error', errorListener)
 
     let response = ''
-    let dataListener = (data) => {
+    const dataListener = (data) => {
       response += data.toString()
       if (!response.endsWith('\r\n\r\n')) {
         // response not completed yet
@@ -57,7 +57,7 @@ class myAgent extends https.Agent {
     let cmd = 'CONNECT ' + options.hostname + ':' + options.port + ' HTTP/1.1\r\n'
     if (options.proxy.auth) {
       // noinspection JSCheckFunctionSignatures
-      let auth = Buffer.from(options.proxy.auth).toString('base64')
+      const auth = Buffer.from(options.proxy.auth).toString('base64')
       cmd += 'Proxy-Authorization: Basic ' + auth + '\r\n'
     }
     cmd += '\r\n'

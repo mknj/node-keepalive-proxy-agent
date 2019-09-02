@@ -1,9 +1,9 @@
-let https = require('https')
-let MyAgent = require('.')
-let fs = require('fs')
-let si = require('si')
-let testServer = require('./testserver')
-let ports = {}
+const https = require('https')
+const MyAgent = require('.')
+const fs = require('fs')
+const si = require('si')
+const testServer = require('./testserver')
+const ports = {}
 ports.add = function (k, i) {
   i = i || 1
   this[k] = i + (this[k] || 0)
@@ -11,10 +11,10 @@ ports.add = function (k, i) {
 
 let workers = 0
 let countDown = 30000
-let agents = []
+const agents = []
 
-agents[0] = new MyAgent({maxSockets: 4, proxy: {hostname: 'localhost', port: 3128}})
-agents[1] = new MyAgent({proxy: {hostname: 'localhost', port: 3129, auth: 'bob:alice'}})
+agents[0] = new MyAgent({ maxSockets: 4, proxy: { hostname: 'localhost', port: 3128 } })
+agents[1] = new MyAgent({ proxy: { hostname: 'localhost', port: 3129, auth: 'bob:alice' } })
 
 function doIt () {
   if (countDown <= 0) {
@@ -22,9 +22,9 @@ function doIt () {
   }
   countDown = countDown - 1
   workers = workers + 1
-  agents[2] = new MyAgent({maxSockets: 4, proxy: {host: 'localhost', port: 3128}})
-  let x = agents[countDown % 3]
-  https.get({hostname: 'localhost', port: 8443 + countDown % 2, agent: x, rejectUnauthorized: false}, (resp) => {
+  agents[2] = new MyAgent({ maxSockets: 4, proxy: { host: 'localhost', port: 3128 } })
+  const x = agents[countDown % 3]
+  https.get({ hostname: 'localhost', port: 8443 + countDown % 2, agent: x, rejectUnauthorized: false }, (resp) => {
     ports.add(resp.socket.localPort)
     resp.on('data', x => x
     )
@@ -51,7 +51,7 @@ setInterval(() => {
       if (err) {
         return
       }
-      let l = process.memoryUsage()
+      const l = process.memoryUsage()
       l.workers = workers
       l.ReqPerSec = oc - countDown
       l.countDown = countDown

@@ -4,11 +4,11 @@ const myProxy = require('proxy')
 
 function startServer (PORT) {
   return new Promise((resolve, reject) => {
-    pem.createCertificate({days: 1, selfSigned: true}, function (err, keys) {
+    pem.createCertificate({ days: 1, selfSigned: true }, function (err, keys) {
       if (err) {
         reject(err)
       }
-      let server = https.createServer({key: keys.serviceKey, cert: keys.certificate}, function (req, res) {
+      const server = https.createServer({ key: keys.serviceKey, cert: keys.certificate }, function (req, res) {
         res.end(':' + req.url + ':')
       }).listen(PORT)
       resolve(server)
@@ -17,7 +17,7 @@ function startServer (PORT) {
 }
 
 function startProxy (PORT, auth) {
-  let p = myProxy(null, null)
+  const p = myProxy(null, null)
   if (auth) {
     p.authenticate = function (req, fn) {
       fn(null, req.headers['proxy-authorization'] === 'Basic Ym9iOmFsaWNl') // user bob password alice
@@ -28,7 +28,7 @@ function startProxy (PORT, auth) {
   return p
 }
 
-let servers = []
+const servers = []
 
 async function start () {
   servers.push(await startServer(8443))

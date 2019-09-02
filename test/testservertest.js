@@ -1,11 +1,11 @@
 /* eslint-env node, mocha, should */
 require('should')
-let testServer = require('../testserver')
+const testServer = require('../testserver')
 const pem = require('pem')
 
 describe('testServer ', function () {
   it('start() throws on pem error', function () {
-    let old = pem.createCertificate
+    const old = pem.createCertificate
     // MOCK MOCK MOCK
     pem.createCertificate = function (a, cb2) { cb2(new Error('HACK')) }
     // noinspection JSValidateTypes
