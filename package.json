@@ -24,7 +24,7 @@
   "dependencies": {},
   "devDependencies": {
     "https-agent": "^1.0.0",
-    "https-proxy-agent": "^3.0.0",
+    "https-proxy-agent": "^4.0.0",
     "mocha": "^6.0.0",
     "nyc": "^14.1.1",
     "opener": "^1.5.1",
