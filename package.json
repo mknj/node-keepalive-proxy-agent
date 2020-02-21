@@ -3,6 +3,7 @@
   "description": "proxy agent that honors keepalive",
   "main": "index.js",
   "scripts": {
+    "bump": "test -n \"$1\" && npm version $1 && npm publish && git push",
     "test": "standard && mocha",
     "lint": "standard index.js testerver.js test/*.js",
     "cov": "nyc --reporter=html --reporter=text mocha && opener coverage/index.html",
