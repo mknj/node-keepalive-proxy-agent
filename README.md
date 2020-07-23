@@ -14,6 +14,7 @@
 - option to allow self-signed servers
 - basic auth for proxy authentication
 - 60 lines of code (100% code coverage)
+- only works with https requests (proxy can be http or https)
 
 # installation
 
