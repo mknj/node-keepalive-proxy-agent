@@ -139,6 +139,33 @@ describe('proxy agent', function () {
         cb()
       })
     })
+    it('allors host instead of hostname', function (cb) {
+      const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3129, auth: 'bo2b:alice' } })
+      const options = { host: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+
+      https.get(options).on('error', e => {
+        e.message.should.be.equal('HTTP/1.1 407')
+        cb()
+      })
+    })
+    it('allows host+port instead of hostname', function (cb) {
+      const agent = new MyAgent({ proxy: { host: 'localhost', port: 3129, auth: 'bo2b:alice' } })
+      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+
+      https.get(options).on('error', e => {
+        e.message.should.be.equal('HTTP/1.1 407')
+        cb()
+      })
+    })
+    it('allows host instead of hostname', function (cb) {
+      const agent = new MyAgent({ proxy: { host: 'localhost', port: 3129, auth: 'bo2b:alice' } })
+      const options = { hostname: 'localhost', agent: agent, rejectUnauthorized: false }
+
+      https.get(options).on('error', e => {
+        e.message.should.be.equal('HTTP/1.1 407')
+        cb()
+      })
+    })
   })
 
   describe('when receiving chunked CONNECT response', function () {
