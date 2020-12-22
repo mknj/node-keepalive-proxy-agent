@@ -41,7 +41,7 @@ class myAgent extends https.Agent {
       proxySocket.removeListener('error', errorListener)
       proxySocket.removeListener('data', dataListener)
 
-      const m = response.match(/^HTTP\/1.1 (\d*)/)
+      const m = response.match(/^HTTP\/1.\d (\d*)/)
       if (m == null || m[1] == null) {
         proxySocket.destroy()
         return cb(new Error(response.trim()))
