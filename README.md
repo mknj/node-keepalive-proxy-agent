@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/mknj/node-keepalive-proxy-agent.svg?branch=master)](https://travis-ci.org/mknj/node-keepalive-proxy-agent)
 [![codecov](https://codecov.io/gh/mknj/node-keepalive-proxy-agent/branch/master/graph/badge.svg)](https://codecov.io/gh/mknj/node-keepalive-proxy-agent)
 [![npm](https://img.shields.io/npm/dw/keepalive-proxy-agent.svg)](https://www.npmjs.com/package/keepalive-proxy-agent)
-![npm](https://img.shields.io/npm/l/express.svg)
+![npm](https://img.shields.io/npm/l/keepalive-proxy-agent.svg)
 [![Greenkeeper badge](https://badges.greenkeeper.io/mknj/node-keepalive-proxy-agent.svg)](https://greenkeeper.io/)
 [![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
 
