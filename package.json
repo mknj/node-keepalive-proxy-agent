@@ -17,7 +17,7 @@
     "url": "git+https://github.com/mknj/node-keepalive-proxy-agent.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/mknj/node-keepalive-proxy-agent/issues"
   },
