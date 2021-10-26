@@ -1,11 +1,8 @@
 # node-keepalive-proxy-agent
 
 [![Join the chat at https://gitter.im/node-keepalive-proxy-agent/Lobby](https://badges.gitter.im/node-keepalive-proxy-agent/Lobby.svg)](https://gitter.im/node-keepalive-proxy-agent/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/mknj/node-keepalive-proxy-agent.svg?branch=master)](https://travis-ci.org/mknj/node-keepalive-proxy-agent)
-[![codecov](https://codecov.io/gh/mknj/node-keepalive-proxy-agent/branch/master/graph/badge.svg)](https://codecov.io/gh/mknj/node-keepalive-proxy-agent)
 [![npm](https://img.shields.io/npm/dw/keepalive-proxy-agent.svg)](https://www.npmjs.com/package/keepalive-proxy-agent)
 ![npm](https://img.shields.io/npm/l/keepalive-proxy-agent.svg)
-[![Greenkeeper badge](https://badges.greenkeeper.io/mknj/node-keepalive-proxy-agent.svg)](https://greenkeeper.io/)
 [![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
 
 # features
@@ -37,7 +34,7 @@ https.get(options, (resp) => resp.pipe(process.stdout))
 ## using provided proxy
 ``` javascript
 ...
-let agent = new Agent ({proxy:{hostname:"MYPROXYHOST",port:3128}})
+let agent = new Agent ({proxy:{host:"MYPROXYHOST",port:3128}})
 ...
 
 ```
