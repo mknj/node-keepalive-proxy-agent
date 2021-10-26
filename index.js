@@ -24,7 +24,7 @@ class myAgent extends https.Agent {
   }
 
   createConnectionHttpsAfterHttp (options, cb) {
-    const proxySocket = net.connect(options.proxy)
+    const proxySocket = net.connect(+options.proxy.port, options.proxy.hostname || options.proxy.host)
     const errorListener = (error) => {
       proxySocket.destroy()
       cb(error)

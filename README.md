@@ -32,7 +32,6 @@ let Agent = require('keepalive-proxy-agent')
 let agent = new Agent ()
 let options = {hostname: 'google.de', port: 443, agent: agent}
 https.get(options, (resp) => resp.pipe(process.stdout))
-
 ```
 
 ## using provided proxy
@@ -55,9 +54,6 @@ let options = {hostname: 'google.de', port: 443, agent: agent, rejectUnauthorize
 
 ``` javascript
 ...
-let agent = new Agent ({proxy:{hostname:"MYPROXYHOST",port:3128, auth:"USER:PASS"}})
+let agent = new Agent ({proxy:{host:"MYPROXYHOST",port:3128, auth:"USER:PASS"}})
 ...
 ```
-
-# caveat
-- use hostname+port, not host+port, see https://nodejs.org/api/url.html#url_url_strings_and_url_objects for details
