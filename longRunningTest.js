@@ -57,7 +57,7 @@ setInterval(() => {
       l.countDown = countDown
       if (data) l.fds = data.length
       l.seenPorts = Object.keys(ports).length
-      Object.keys(l).map(k => { l[k] = (l[k] < 10000) ? l[k] : si.format(l[k]) })
+      Object.keys(l).forEach(k => { l[k] = (l[k] < 10000) ? l[k] : si.format(l[k]) })
       console.log(l)
       oc = countDown
     })

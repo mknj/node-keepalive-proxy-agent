@@ -26,15 +26,15 @@
   "devDependencies": {
     "https-agent": "^1.0.0",
     "https-proxy-agent": "^5.0.0",
-    "mocha": "^7.0.1",
+    "mocha": "^9.1.3",
     "nyc": "^15.0.0",
-    "opener": "^1.5.1",
+    "opener": "^1.5.2",
     "pem": "^1.14.2",
     "proxy": "^1.0.0",
     "request": "^2.88.0",
     "should": "^13.2.3",
     "si": "^2.0.0",
-    "standard": "^14.1.0",
+    "standard": "^16.0.4",
     "tunnel": "0.0.6",
     "tunnel-agent": "^0.6.0"
   },
