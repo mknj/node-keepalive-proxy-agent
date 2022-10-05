@@ -30,6 +30,7 @@ class myAgent extends https.Agent {
       cb(error)
     }
     proxySocket.once('error', errorListener)
+    proxySocket.once('end', errorListener)
 
     let response = ''
     const dataListener = (data) => {
@@ -38,6 +39,7 @@ class myAgent extends https.Agent {
         // response not completed yet
         return
       }
+      proxySocket.removeListener('end', errorListener)
       proxySocket.removeListener('error', errorListener)
       proxySocket.removeListener('data', dataListener)
 

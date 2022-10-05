@@ -5,7 +5,7 @@
   "scripts": {
     "bump": "test -n \"$1\" && npm version $1 && npm publish && git push",
     "test": "standard && mocha",
-    "lint": "standard index.js testerver.js test/*.js",
+    "lint": "standard --fix index.js testserver.js test/*.js",
     "cov": "nyc --reporter=html --reporter=text mocha && opener coverage/index.html",
     "travis": "nyc --reporter=json --reporter=text mocha"
   },
@@ -26,15 +26,14 @@
   "devDependencies": {
     "https-agent": "^1.0.0",
     "https-proxy-agent": "^5.0.0",
-    "mocha": "^9.1.3",
+    "mocha": "^10.0.0",
     "nyc": "^15.0.0",
     "opener": "^1.5.2",
-    "pem": "^1.14.2",
+    "pem": "^1.14.5",
     "proxy": "^1.0.0",
-    "request": "^2.88.0",
     "should": "^13.2.3",
     "si": "^2.0.0",
-    "standard": "^16.0.4",
+    "standard": "^17.0.0",
     "tunnel": "0.0.6",
     "tunnel-agent": "^0.6.0"
   },
