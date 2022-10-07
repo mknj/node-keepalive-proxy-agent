@@ -166,6 +166,32 @@ describe('proxy agent', function () {
         cb()
       })
     })
+    it('allows uri string in options', function (cb) {
+      const agent = new MyAgent("http://localhost:3128/")
+      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      let data = 'BAD'
+      https.get(options, (resp) => {
+        resp.statusCode.should.equal(200)
+        resp.on('data', d => { data = d })
+        resp.on('end', () => {
+          data.toString().should.equal(':/:')
+          cb()
+        })
+      })
+    })
+    it('allows options without proxy: key', function (cb) {
+      const agent = new MyAgent({  hostname: 'localhost', port: 3128  })
+      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      let data = 'BAD'
+      https.get(options, (resp) => {
+        resp.statusCode.should.equal(200)
+        resp.on('data', d => { data = d })
+        resp.on('end', () => {
+          data.toString().should.equal(':/:')
+          cb()
+        })
+      })
+    })
   })
 
   describe('when receiving chunked CONNECT response', function () {
@@ -181,7 +207,7 @@ describe('proxy agent', function () {
       pServer.close()
     })
 
-    function configureAndStartProxy (connectResponses, cb) {
+    function configureAndStartProxy (connectResponses, cb,dropSocket) {
       pServer.on('connect', (request, socket, head) => {
         const targetHost = request.url.split(':')
         const conn = net.connect({
@@ -202,6 +228,9 @@ describe('proxy agent', function () {
             socket.write(response, 'UTF-8', function () {
               if (connectResponses.length > 0) {
                 setTimeout(writeNextResponse, 100, connectResponses)
+              } else if (dropSocket) {
+                socket.end()
+                conn.end()
               } else {
                 conn.write(head)
                 conn.pipe(socket)
@@ -295,6 +324,26 @@ describe('proxy agent', function () {
       const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/0.0 401 Not Authorized')
+        cb()
+      })
+    })
+    it('throws error.code ERR_HTTP_PROXY_CONNECT on invalid response', function (cb) {
+      configureAndStartProxy(['HTTP/0.0 401 Not Authorized\r\n\r\n'], null, null, cb)
+      const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
+      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      https.get(options).on('error', e => {
+        e.message.should.be.equal('HTTP/0.0 401 Not Authorized')
+        e.code.should.be.equal('ERR_HTTP_PROXY_CONNECT')
+        cb()
+      })
+    })
+    it('throws error.code ERR_HTTP_PROXY_CONNECT on socket close before connect', function (cb) {
+      configureAndStartProxy(['HTTP'], null, true, cb)
+      const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
+      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      https.get(options).on('error', e => {
+        e.message.should.be.equal("'end'")
+        e.code.should.be.equal('ERR_HTTP_PROXY_CONNECT')
         cb()
       })
     })
