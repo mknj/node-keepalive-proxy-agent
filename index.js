@@ -7,11 +7,22 @@ class myAgent extends https.Agent {
     options = options || {}
     if (options.proxy === undefined) {
       let u = null
-      if (process.env.HTTPS_PROXY !== undefined) {
-        u = new url.URL(process.env.HTTPS_PROXY)
+      if ( typeof options === 'string') {
+        u = new url.URL(options)
+        options = {};
       }
-      if (process.env.https_proxy !== undefined) {
-        u = new url.URL(process.env.https_proxy)
+      else if ( options.hostname !== undefined ) {
+        u = { hostname: options.hostname, 
+              port: (options.port === undefined ? '':options.port)}
+        options = {};
+      }
+      else {
+        if (process.env.HTTPS_PROXY !== undefined) {
+          u = new url.URL(process.env.HTTPS_PROXY)
+        }
+        if (process.env.https_proxy !== undefined) {
+          u = new url.URL(process.env.https_proxy)
+        }
       }
       if (u) {
         options.proxy = { hostname: u.hostname, port: u.port }
@@ -29,8 +40,13 @@ class myAgent extends https.Agent {
       proxySocket.destroy()
       cb(error)
     }
+    const endListener = () => {
+      const error = new Error("'end'")
+      error.code = "ERR_HTTP_PROXY_CONNECT"
+      cb(error)
+    }
     proxySocket.once('error', errorListener)
-    proxySocket.once('end', errorListener)
+    proxySocket.once('end',endListener)
 
     let response = ''
     const dataListener = (data) => {
@@ -39,17 +55,21 @@ class myAgent extends https.Agent {
         // response not completed yet
         return
       }
-      proxySocket.removeListener('end', errorListener)
       proxySocket.removeListener('error', errorListener)
+      proxySocket.removeListener('end', endListener)
       proxySocket.removeListener('data', dataListener)
 
       const m = response.match(/^HTTP\/1.\d (\d*)/)
       if (m == null || m[1] == null) {
+        const error = new Error(response.trim());
+        error.code = "ERR_HTTP_PROXY_CONNECT"
         proxySocket.destroy()
-        return cb(new Error(response.trim()))
+        return cb(error)
       } else if (m[1] !== '200') {
+        const error= new Error(m[0])
+        error.code = "ERR_HTTP_PROXY_CONNECT"
         proxySocket.destroy()
-        return cb(new Error(m[0]))
+        return cb(error)
       }
       options.socket = proxySocket // tell super function to use our proxy socket,
       cb(null, super.createConnection(options))
