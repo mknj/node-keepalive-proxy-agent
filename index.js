@@ -32,6 +32,7 @@ class myAgent extends https.Agent {
       options.keepAlive = true
     }
     super(options)
+    if (options.timeout) this._timeout = options.timeout
   }
 
   createConnectionHttpsAfterHttp (options, cb) {
@@ -47,6 +48,14 @@ class myAgent extends https.Agent {
     }
     proxySocket.once('error', errorListener)
     proxySocket.once('end',endListener)
+
+    if (this._timeout) {
+			proxySocket.setTimeout(this._timeout);
+
+			proxySocket.on('timeout', () => {
+				proxySocket.end();
+			});
+		}
 
     let response = ''
     const dataListener = (data) => {
