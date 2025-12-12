@@ -79,6 +79,7 @@ class myAgent extends https.Agent {
     let host = options.hostname
     if (!host) host = options.host
     let cmd = 'CONNECT ' + host + ':' + options.port + ' HTTP/1.1\r\n'
+    cmd += `Host: ${host}:${options.port}\r\n`
     if (options.proxy.auth) {
       // noinspection JSCheckFunctionSignatures
       const auth = Buffer.from(options.proxy.auth).toString('base64')
