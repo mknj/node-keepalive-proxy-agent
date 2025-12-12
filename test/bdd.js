@@ -1,10 +1,10 @@
 /* eslint-env node, mocha */
-require('should')
-const testServer = require('../testserver')
-const http = require('http')
-const https = require('https')
-const net = require('net')
-const MyAgent = require('..')
+import 'should'
+import * as testServer from '../testserver.js'
+import http from 'http'
+import https from 'https'
+import net from 'net'
+import MyAgent from '../index.js'
 
 describe('proxy agent', function () {
   before(function () {
@@ -35,7 +35,7 @@ describe('proxy agent', function () {
     it('succeeds on env https_proxy', function (cb) {
       process.env.https_proxy = 'http://localhost:3128'
       const agent = new MyAgent()
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -49,7 +49,7 @@ describe('proxy agent', function () {
     it('succeeds on env HTTPS_PROXY', function (cb) {
       process.env.HTTPS_PROXY = 'http://localhost:3128'
       const agent = new MyAgent()
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -62,7 +62,7 @@ describe('proxy agent', function () {
     })
     it('also work with no proxy setting', function (cb) {
       const agent = new MyAgent()
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -77,7 +77,7 @@ describe('proxy agent', function () {
   describe('when using no authentication', function () {
     it('succeeds on good request', function (cb) {
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3128 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -90,7 +90,7 @@ describe('proxy agent', function () {
     })
     it('throws error on bad target port', function (cb) {
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3128 } })
-      const options = { hostname: 'localhost', port: 8445, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8445, agent, rejectUnauthorized: false }
 
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/1.1 500')
@@ -100,7 +100,7 @@ describe('proxy agent', function () {
 
     it('automatically uses port 443 ', function (cb) {
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3128 } })
-      const options = { hostname: 'localhost', agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', agent, rejectUnauthorized: false }
       https.get(options).on('error', e => {
         e.message.should.be.oneOf('HTTP/1.1 500', 'socket hang up')
         cb()
@@ -108,7 +108,7 @@ describe('proxy agent', function () {
     })
     it('throws error on bad proxy port', function (cb) {
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', agent, rejectUnauthorized: false }
       https.get(options).on('error', e => {
         // noinspection SpellCheckingInspection
         e.message.should.be.equal('connect ECONNREFUSED 127.0.0.1:3130')
@@ -119,7 +119,7 @@ describe('proxy agent', function () {
   describe('when using authentication', function () {
     it('succeeds on good auth', function (cb) {
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3129, auth: 'bob:alice' } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -132,7 +132,7 @@ describe('proxy agent', function () {
     })
     it('throws error on bad auth', function (cb) {
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3129, auth: 'bo2b:alice' } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
 
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/1.1 407')
@@ -141,7 +141,7 @@ describe('proxy agent', function () {
     })
     it('allors host instead of hostname', function (cb) {
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3129, auth: 'bo2b:alice' } })
-      const options = { host: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { host: 'localhost', port: 8443, agent, rejectUnauthorized: false }
 
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/1.1 407')
@@ -150,7 +150,7 @@ describe('proxy agent', function () {
     })
     it('allows host+port instead of hostname', function (cb) {
       const agent = new MyAgent({ proxy: { host: 'localhost', port: 3129, auth: 'bo2b:alice' } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
 
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/1.1 407')
@@ -159,7 +159,7 @@ describe('proxy agent', function () {
     })
     it('allows host instead of hostname', function (cb) {
       const agent = new MyAgent({ proxy: { host: 'localhost', port: 3129, auth: 'bo2b:alice' } })
-      const options = { hostname: 'localhost', agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', agent, rejectUnauthorized: false }
 
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/1.1 407')
@@ -167,8 +167,8 @@ describe('proxy agent', function () {
       })
     })
     it('allows uri string in options', function (cb) {
-      const agent = new MyAgent("http://localhost:3128/")
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const agent = new MyAgent('http://localhost:3128/')
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -180,8 +180,8 @@ describe('proxy agent', function () {
       })
     })
     it('allows options without proxy: key', function (cb) {
-      const agent = new MyAgent({  hostname: 'localhost', port: 3128  })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const agent = new MyAgent({ hostname: 'localhost', port: 3128 })
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -207,7 +207,7 @@ describe('proxy agent', function () {
       pServer.close()
     })
 
-    function configureAndStartProxy (connectResponses, cb,dropSocket) {
+    function configureAndStartProxy (connectResponses, cb, dropSocket) {
       pServer.on('connect', (request, socket, head) => {
         const targetHost = request.url.split(':')
         const conn = net.connect({
@@ -263,7 +263,7 @@ describe('proxy agent', function () {
     it('succeeds on good response', function (cb) {
       configureAndStartProxy(['HTTP/1.1 200 OK\r\n\r\n'], null, null, cb)
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -279,7 +279,7 @@ describe('proxy agent', function () {
     it('succeeds on two part response', function (cb) {
       configureAndStartProxy(['HTTP/1.1 200 OK\r\n', '\r\n'], null, null, cb)
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -295,7 +295,7 @@ describe('proxy agent', function () {
     it('succeeds on three part response', function (cb) {
       configureAndStartProxy(['HTTP/1.1 2', '00 OK', '\r\n\r\n'], null, null, cb)
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       let data = 'BAD'
       https.get(options, (resp) => {
         resp.statusCode.should.equal(200)
@@ -311,7 +311,7 @@ describe('proxy agent', function () {
     it('throws on three part 401 response', function (cb) {
       configureAndStartProxy(['HTTP/1.1 4', '01 Not Authorized', '\r\n\r\n'], null, null, cb)
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/1.1 401')
         cb()
@@ -321,7 +321,7 @@ describe('proxy agent', function () {
     it('throws on three part invalid response', function (cb) {
       configureAndStartProxy(['HTTP/0.0 4', '01 Not Authorized', '\r\n\r\n'], null, null, cb)
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/0.0 401 Not Authorized')
         cb()
@@ -330,7 +330,7 @@ describe('proxy agent', function () {
     it('throws error.code ERR_HTTP_PROXY_CONNECT on invalid response', function (cb) {
       configureAndStartProxy(['HTTP/0.0 401 Not Authorized\r\n\r\n'], null, null, cb)
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       https.get(options).on('error', e => {
         e.message.should.be.equal('HTTP/0.0 401 Not Authorized')
         e.code.should.be.equal('ERR_HTTP_PROXY_CONNECT')
@@ -340,7 +340,7 @@ describe('proxy agent', function () {
     it('throws error.code ERR_HTTP_PROXY_CONNECT on socket close before connect', function (cb) {
       configureAndStartProxy(['HTTP'], null, true, cb)
       const agent = new MyAgent({ proxy: { hostname: 'localhost', port: 3130 } })
-      const options = { hostname: 'localhost', port: 8443, agent: agent, rejectUnauthorized: false }
+      const options = { hostname: 'localhost', port: 8443, agent, rejectUnauthorized: false }
       https.get(options).on('error', e => {
         e.message.should.be.equal("'end'")
         e.code.should.be.equal('ERR_HTTP_PROXY_CONNECT')

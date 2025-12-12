@@ -1,7 +1,7 @@
 /* eslint-env node, mocha, should */
-require('should')
-const testServer = require('../testserver')
-const pem = require('pem')
+import 'should'
+import * as testServer from '../testserver.js'
+import pem from 'pem'
 
 describe('testServer ', function () {
   it('start() throws on pem error', function () {

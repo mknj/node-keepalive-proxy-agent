@@ -1,8 +1,9 @@
-const https = require('https')
-const pem = require('pem')
-const myProxy = require('proxy')
+import https from 'https'
+import http from 'http'
+import pem from 'pem'
+import { createProxy } from 'proxy'
 
-function startServer (PORT) {
+export function startServer (PORT) {
   return new Promise((resolve, reject) => {
     pem.createCertificate({ days: 1, selfSigned: true }, function (err, keys) {
       if (err) {
@@ -17,37 +18,34 @@ function startServer (PORT) {
 }
 
 function startProxy (PORT, auth) {
-  const p = myProxy(null, null)
+  const server = http.createServer()
+  const p = createProxy(server)
   if (auth) {
-    p.authenticate = function (req, fn) {
-      fn(null, req.headers['proxy-authorization'] === 'Basic Ym9iOmFsaWNl') // user bob password alice
+    p.authenticate = function (req) {
+      return req.headers['proxy-authorization'] === 'Basic Ym9iOmFsaWNl' // user bob password alice
     }
   }
   // noinspection JSUnresolvedFunction
-  p.listen(PORT)
-  return p
+  server.listen(PORT)
+  return server
 }
 
 const servers = []
 
-async function start () {
+export async function start () {
   servers.push(await startServer(8443))
   servers.push(await startServer(8444))
   servers.push(startProxy(3128))
   servers.push(startProxy(3129, true))
 }
 
-async function stop () {
+export async function stop () {
   servers[0].close()
   servers[1].close()
   servers[2].close()
   servers[3].close()
 }
 
-module.exports = {
-  start: start,
-  stop: stop
-}
 /*
 if (require.main === module) {
   start()
