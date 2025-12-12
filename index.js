@@ -1,3 +1,4 @@
+// оригинальный форк
 const https = require('https')
 const net = require('net')
 const url = require('url')
@@ -32,6 +33,7 @@ class myAgent extends https.Agent {
       options.keepAlive = true
     }
     super(options)
+    if (options.timeout) this._timeout = options.timeout
   }
 
   createConnectionHttpsAfterHttp (options, cb) {
@@ -47,6 +49,17 @@ class myAgent extends https.Agent {
     }
     proxySocket.once('error', errorListener)
     proxySocket.once('end',endListener)
+
+    if (this._timeout) {
+			proxySocket.setTimeout(this._timeout);
+
+			proxySocket.on('timeout', () => {
+				//proxySocket.end();
+        const err/* : NodeJS.ErrnoException */ = new Error(`A "socket" was not created for HTTP request before ${this._timeout}ms`);
+				err.code = 'ETIMEOUT';
+        proxySocket.destroy(err)
+			});
+		}
 
     let response = ''
     const dataListener = (data) => {
